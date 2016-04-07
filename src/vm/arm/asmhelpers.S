@@ -1354,34 +1354,21 @@ DelayLoad_Helper\suffix:
 
 #endif // FEATURE_READYTORUN
 
-#define CONTEXT_OF_R4	(20)
-#define CONTEXT_OF_R5	(CONTEXT_OF_R4 + 4)
-#define CONTEXT_OF_R6	(CONTEXT_OF_R5 + 4)
-#define CONTEXT_OF_R7	(CONTEXT_OF_R6 + 4)
-#define CONTEXT_OF_R8	(CONTEXT_OF_R7 + 4)
-#define CONTEXT_OF_R9	(CONTEXT_OF_R8 + 4)
-#define CONTEXT_OF_R10	(CONTEXT_OF_R9 + 4)
-#define CONTEXT_OF_R11	(CONTEXT_OF_R10 + 4)
-#define CONTEXT_OF_R12	(CONTEXT_OF_R11 + 4)
-#define CONTEXT_OF_Sp	(CONTEXT_OF_R12 + 4)
-#define CONTEXT_OF_Lr	(CONTEXT_OF_Sp + 4)
-#define CONTEXT_OF_Pc	(CONTEXT_OF_Lr + 4)
-
 // EXTERN_C void StartUnwindingNativeFrames(CONTEXT* context, PAL_SEHException* ex);
 // Ported from src/vm/amd64/unixasmhelpers.S
 LEAF_ENTRY StartUnwindingNativeFrames, _TEXT
 	push_nonvol_reg {r7} /* FP. x64-RBP */
 
-	ldr	r4,	[r0, #(CONTEXT_OF_R4)]
-	ldr	r5,	[r0, #(CONTEXT_OF_R5)]
-	ldr	r6,	[r0, #(CONTEXT_OF_R6)]
-	ldr	r7,	[r0, #(CONTEXT_OF_R7)]
-	ldr	r8,	[r0, #(CONTEXT_OF_R8)]
-	ldr	r9,	[r0, #(CONTEXT_OF_R9)]
-	ldr	r10,	[r0, #(CONTEXT_OF_R10)]
-	ldr	r11,	[r0, #(CONTEXT_OF_R11)]
-	ldr	sp,	[r0, #(CONTEXT_OF_Sp)]
-	ldr	lr,	[r0, #(CONTEXT_OF_Lr)]
+	ldr	r4,	[r0, #(CONTEXT_R4)]
+	ldr	r5,	[r0, #(CONTEXT_R5)]
+	ldr	r6,	[r0, #(CONTEXT_R6)]
+	ldr	r7,	[r0, #(CONTEXT_R7)]
+	ldr	r8,	[r0, #(CONTEXT_R8)]
+	ldr	r9,	[r0, #(CONTEXT_R9)]
+	ldr	r10,	[r0, #(CONTEXT_R10)]
+	ldr	r11,	[r0, #(CONTEXT_R11)]
+	ldr	sp,	[r0, #(CONTEXT_Sp)]
+	ldr	lr,	[r0, #(CONTEXT_Lr)]
 
 	mov r7, sp
 	.setfp r7, sp
