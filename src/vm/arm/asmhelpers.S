@@ -1373,7 +1373,7 @@ LEAF_ENTRY StartUnwindingNativeFrames, _TEXT
 	mov r7, sp
 	.setfp r7, sp
 
-	ldr	r2,	[r0, #(CONTEXT_OF_Pc)]
+	ldr	r2,	[r0, #(CONTEXT_Pc)]
 
         push	{r2}
 
