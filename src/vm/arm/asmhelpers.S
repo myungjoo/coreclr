@@ -1370,13 +1370,11 @@ LEAF_ENTRY StartUnwindingNativeFrames, _TEXT
 	ldr	sp,	[r0, #(CONTEXT_Sp)]
 	ldr	lr,	[r0, #(CONTEXT_Lr)]
 
-	mov r7, sp
-	.setfp r7, sp
-
 	ldr	r2,	[r0, #(CONTEXT_Pc)]
 
+        // Store return address to the stack
         push	{r2}
-
+        // The PAL_SEHException pointer
 	mov	r0,	r1
 	b	EXTERNAL_C_FUNC(ThrowExceptionHelper)
 LEAF_END StartUnwindingNativeFrames, _TEXT
