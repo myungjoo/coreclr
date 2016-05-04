@@ -35,7 +35,7 @@ namespace System {
         }
     
         internal OperatingSystem(PlatformID platform, Version version, string servicePack) {
-            if( platform < PlatformID.Win32S || platform > PlatformID.MacOSX) {
+            if( !isValidPlatformID(platform)) {
                 throw new ArgumentException(
                     Environment.GetResourceString("Arg_EnumIllegalVal", (int)platform),
                     "platform");
