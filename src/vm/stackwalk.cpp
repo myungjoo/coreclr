@@ -770,6 +770,9 @@ UINT_PTR Thread::VirtualUnwindToFirstManagedCallFrame(T_CONTEXT* pContext)
     CONTRACTL_END;
 
     PCODE uControlPc = GetIP(pContext);
+#ifdef _ARM_
+    T_CONTEXT pContextCallee;
+#endif
 
     // unwind out of this function and out of our caller to
     // get our caller's PSP, or our caller's caller's SP.
@@ -778,7 +781,10 @@ UINT_PTR Thread::VirtualUnwindToFirstManagedCallFrame(T_CONTEXT* pContext)
 #ifndef FEATURE_PAL
         uControlPc = VirtualUnwindCallFrame(pContext);
 #else // !FEATURE_PAL
-        BOOL success = PAL_VirtualUnwind(pContext, NULL);
+#ifdef _ARM_
+        memcpy(&pContextCallee, pContext, sizeof(T_CONTEXT));
+#endif
+        BOOL success = PAL_VirtualUnwind(pContext, NULL, 0);
         if (!success)
         {
             _ASSERTE(!"Thread::VirtualUnwindToFirstManagedCallFrame: PAL_VirtualUnwind failed");
@@ -791,6 +797,25 @@ UINT_PTR Thread::VirtualUnwindToFirstManagedCallFrame(T_CONTEXT* pContext)
         {
             break;
         }
+#ifdef _ARM_
+        if (IsIPInMarkedJitHelper(uControlPc))
+        {
+	    exit(-1);
+            // JIT_WriteBarrir does not support libunwind or VirtualUnwindLeafCallFrame
+	    // It did not save unwind information while we got deeper by signal handler
+	    // We need to unwind manually from its callee. damn...
+	    memcpy(pContext, &pContextCallee, sizeof(T_CONTEXT));
+
+	    success = PAL_VirtualUnwind(pContext, NULL, 1);
+            if (!success)
+            {
+                _ASSERTE(!"Thread::VirtualUnwindToFirstManagedCallFrame: PAL_VirtualUnwind failed");
+                EEPOLICY_HANDLE_FATAL_ERROR(COR_E_EXECUTIONENGINE);
+            }
+
+	    uControlPc = GetIP(pContext);
+        }
+#endif // _ARM_
 #endif // !FEATURE_PAL
     }
 

@@ -2004,7 +2004,7 @@ void DbgTransportSession::TransportWorker()
                     HANDLE_TRANSIENT_ERROR();
                 }
 
-                if (!PAL_VirtualUnwind(&frameContext, NULL))
+                if (!PAL_VirtualUnwind(&frameContext, NULL, 0))
                 {
                     HANDLE_TRANSIENT_ERROR();
                 }

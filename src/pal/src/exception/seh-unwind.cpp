@@ -223,7 +223,7 @@ static void GetContextPointers(unw_cursor_t *cursor, unw_context_t *unwContext, 
 #endif
 }
 
-BOOL PAL_VirtualUnwind(CONTEXT *context, KNONVOLATILE_CONTEXT_POINTERS *contextPointers)
+BOOL PAL_VirtualUnwind(CONTEXT *context, KNONVOLATILE_CONTEXT_POINTERS *contextPointers, int repeat)
 {
     int st;
     unw_context_t unwContext;
@@ -278,11 +278,13 @@ BOOL PAL_VirtualUnwind(CONTEXT *context, KNONVOLATILE_CONTEXT_POINTERS *contextP
     curPc = CONTEXTGetPC(context);
 #endif
 
-    st = unw_step(&cursor);
-    if (st < 0)
-    {
-        return FALSE;
-    }
+    do {
+        st = unw_step(&cursor);
+        if (st < 0)
+        {
+            return FALSE;
+        }
+    } while ((repeat--) > 0);
 
     // Check if the frame we have unwound to is a frame that caused
     // synchronous signal, like a hardware exception and record it
@@ -588,11 +590,11 @@ RtlpRaiseException(EXCEPTION_RECORD *ExceptionRecord)
     CONTEXT_CaptureContext(&ContextRecord);
 
     // Find the caller of RtlpRaiseException.  
-    PAL_VirtualUnwind(&ContextRecord, NULL);
+    PAL_VirtualUnwind(&ContextRecord, NULL, 0);
 
     // The frame we're looking at now is RaiseException. We have to unwind one 
     // level further to get the actual context user code could be resumed at.
-    PAL_VirtualUnwind(&ContextRecord, NULL);
+    PAL_VirtualUnwind(&ContextRecord, NULL, 0);
 
 #if defined(_X86_)
     ExceptionRecord->ExceptionAddress = (void *) ContextRecord.Eip;

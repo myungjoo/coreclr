@@ -4589,7 +4589,7 @@ VOID DECLSPEC_NORETURN UnwindManagedExceptionPass1(PAL_SEHException& ex, CONTEXT
         {
             UINT_PTR sp = GetSP(frameContext);
 
-            BOOL success = PAL_VirtualUnwind(frameContext, NULL);
+            BOOL success = PAL_VirtualUnwind(frameContext, NULL, 0);
             if (!success)
             {
                 _ASSERTE(!"UnwindManagedExceptionPass1: PAL_VirtualUnwind failed");

@@ -62,7 +62,7 @@ void LazyMachState::unwindLazyState(LazyMachState* baseState,
             DacError(hr);
         }
 #else
-        PAL_VirtualUnwind(&ctx, &nonVolRegPtrs);
+        PAL_VirtualUnwind(&ctx, &nonVolRegPtrs, 0);
 #endif  // DACCESS_COMPILE    
 
         pvControlPc = GetIP(&ctx);
