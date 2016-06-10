@@ -1464,7 +1464,7 @@ DomainAssembly *AssemblySpec::LoadDomainAssembly(FileLoadLevel targetLevel,
     }
 #endif // FEATURE_REFLECTION_ONLY_LOAD
 
-    PEAssemblyHolder pFile(pDomain->BindAssemblySpec(this, fThrowOnFileNotFound, fRaisePrebindEvents, pCallerStackMark, pLoadSecurity));
+    PEAssemblyHolder pFile(pDomain->BindAssemblySpec(this, fThrowOnFileNotFound, fRaisePrebindEvents, pCallerStackMark, pLoadSecurity, TRUE, fThrowOnFileNotFound));
     if (pFile == NULL)
         RETURN NULL;
 
