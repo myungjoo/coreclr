@@ -8470,8 +8470,7 @@ PEAssembly * AppDomain::BindAssemblySpec(
     BOOL                   fRaisePrebindEvents, 
     StackCrawlMark *       pCallerStackMark, 
     AssemblyLoadSecurity * pLoadSecurity,
-    BOOL                   fUseHostBinderIfAvailable,
-    BOOL                   fUseExplicitPath)
+    BOOL                   fUseHostBinderIfAvailable)
 {
     STATIC_CONTRACT_THROWS;
     STATIC_CONTRACT_GC_TRIGGERS;
@@ -8848,7 +8847,7 @@ EndTry2:;
                     // Use CoreClr's fusion alternative
                     CoreBindResult bindResult;
 
-                    pSpec->Bind(this, fThrowOnFileNotFound, &bindResult, fUseExplicitPath/* fNgenExplicitBind */, FALSE /* fExplicitBindToNativeImage */, pCallerStackMark);
+                    pSpec->Bind(this, fThrowOnFileNotFound, &bindResult, FALSE /* fNgenExplicitBind */, FALSE /* fExplicitBindToNativeImage */, pCallerStackMark);
                     hrBindResult = bindResult.GetHRBindResult();
 
                     if (bindResult.Found()) 
