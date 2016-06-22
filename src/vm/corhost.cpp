@@ -55,6 +55,8 @@
 #include "clrprivtypecachewinrt.h"
 #endif
 
+#include "assemblynative.hpp"
+
 GVAL_IMPL_INIT(DWORD, g_fHostConfig, 0);
 
 #ifdef FEATURE_IMPLICIT_TLS
@@ -1324,11 +1326,32 @@ HRESULT CorHost2::ExecuteAssembly(DWORD dwAppDomainId,
 
     _ASSERTE (!pThread->PreemptiveGCDisabled());
 
-    Assembly *pAssembly = AssemblySpec::LoadAssembly(pwzAssemblyPath);
+//    Assembly *pAssembly = AssemblySpec::LoadAssembly(pwzAssemblyPath);
+//    --> AssemblyNative::LoadFromPEImage
+//    static Assembly* LoadFromPEImage(ICLRPrivBinder* pBinderContext, PEImage *pILImage, PEImage *pNIImage);
 
+// Trying to do what AssemblyNative::LoadFromPath does
+    PEImageHolder pILImage = PEImage::OpenImage(pwzAssemblyPath);
+
+    printf("%s:%d +++\n", __func__, __LINE__);
+    if (!pILImage->CheckILFormat()) {
+            // Native Image???
+            printf("%s:%d +++\n", __func__, __LINE__);
+            ThrowHR(COR_E_BADIMAGEFORMAT);
+    }
+    printf("%s:%d +++\n", __func__, __LINE__);
+
+    //ICLRPrivBinder *pBinderContext = pCurDomain->GetLoadContextHostBinder(); // This results in NULL
+    //ICLRPrivBinder *pBinderContext = pCurDomain->GetCurrentLoadContextHostBinder(); // This results in NULL
+    CLRPrivBinderCoreCLR *pBinderContext = pCurDomain->GetTPABinderContext();
+    printf("%s:%d +++\n", __func__, __LINE__);
+    Assembly *pAssembly = AssemblyNative::LoadFromPEImage(pBinderContext, pILImage, NULL);
+
+    printf("%s:%d +++\n", __func__, __LINE__);
 #if defined(FEATURE_MULTICOREJIT)
     pCurDomain->GetMulticoreJitManager().AutoStartProfile(pCurDomain);
 #endif // defined(FEATURE_MULTICOREJIT)
+    printf("%s:%d +++\n", __func__, __LINE__);
 
     {
         GCX_COOP();
